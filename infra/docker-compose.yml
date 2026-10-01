@@ -64,3 +64,5 @@ volumes:
 networks:
   freela-net:
     name: freela-net
+    driver: bridge
+

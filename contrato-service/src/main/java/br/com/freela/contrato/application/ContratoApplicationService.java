@@ -1,12 +1,16 @@
 package br.com.freela.contrato.application;
 
+import br.com.freela.contrato.domain.event.ContratoCriado;
+import br.com.freela.contrato.domain.helper.CustomJsonMapper;
 import br.com.freela.contrato.domain.model.Contrato;
 import br.com.freela.contrato.domain.repository.ContratoRepository;
 import br.com.freela.contrato.domain.shared.DomainEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.core.JacksonException;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,8 +19,12 @@ import java.util.UUID;
 public class ContratoApplicationService {
     private static final Logger log = LoggerFactory.getLogger(ContratoApplicationService.class);
     private final ContratoRepository repository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public ContratoApplicationService(ContratoRepository repository) { this.repository = repository; }
+    public ContratoApplicationService(ContratoRepository repository, KafkaTemplate<String, String> kafkaTemplate) {
+        this.repository = repository;
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Transactional
     public Contrato criar(CriarContratoCommand cmd) {
@@ -33,6 +41,15 @@ public class ContratoApplicationService {
         for (DomainEvent event : contrato.pullDomainEvents()) {
             log.info("contrato.evento.pendente contratoId={} eventId={} eventType={} occurredAt={}",
                     contrato.id(), event.eventId(), event.eventType(), event.occurredAt());
+            try {
+                var eventString = CustomJsonMapper.instance().writeValueAsString(event);
+                kafkaTemplate.send("contrato.criado", eventString);
+            } catch (JacksonException e) {
+                log.error("Erro serializando evento", event);
+                log.error(e.getMessage());
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }
         }
 
         log.info("contrato.criacao.sucesso contratoId={} clienteId={} freelancerId={} status={}",

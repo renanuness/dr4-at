@@ -13,6 +13,19 @@ spring:
     open-in-view: false
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: contrato-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        # Tell the wrapper which real deserializer to use internally
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        # (Optional) If the message does not contain type header, specify a fallback type
+        spring.json.value.default.type: br.com.freela.notificacao.event.ContratoCriado
+    listener:
+      ack-mode: record
 management:
   endpoints:
     web:

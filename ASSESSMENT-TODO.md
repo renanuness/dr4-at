@@ -29,3 +29,29 @@
 - Testar duplicidade.
 - Testar ordenação.
 - Testar integração com broker usando estratégia adequada para testes.
+
+
+## TODO:
+
+### GERAL
+- [ ] Criar documentação para o contrato de todos os eventos
+
+### Contrato service
+- [ ] Adicionar eventos para cada ação do contrato
+- [ ] Adicionar logs
+- [ ] Adicionar zipin
+
+### Notificação service
+- [ ] Adicionar logs para todos os eventos recebidos
+- [ ] Adicionar logs
+- [ ] Adicionar zipkin
+
+### Reputaçao service
+- [ ] Consumir os eventos que sejam relacionados a reputaçao do freelance
+- [ ] Persistir as alterações no banco de dados
+- [ ] Adicionar zipkin
+
+### Auditoria service
+- Consumir todos os eventos
+- [ ] Adicionar logs
+- [ ] Adicionar zipkin

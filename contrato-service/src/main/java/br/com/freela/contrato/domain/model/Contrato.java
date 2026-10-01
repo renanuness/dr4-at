@@ -44,17 +44,21 @@ public class Contrato {
         if (status != StatusContrato.ATIVO) throw new IllegalStateException("Somente contratos ativos recebem entrega");
         status = StatusContrato.ENTREGA_REGISTRADA;
     }
+
     public void concluir() {
         if (status != StatusContrato.ENTREGA_REGISTRADA) throw new IllegalStateException("A entrega precisa estar registrada");
         status = StatusContrato.CONCLUIDO;
     }
+
     public void cancelar() {
         if (status == StatusContrato.CONCLUIDO) throw new IllegalStateException("Contrato concluído não pode ser cancelado");
         status = StatusContrato.CANCELADO;
     }
+
     public List<DomainEvent> pullDomainEvents() {
         var copy = List.copyOf(domainEvents); domainEvents.clear(); return copy;
     }
+
     public List<DomainEvent> domainEvents() { return Collections.unmodifiableList(domainEvents); }
     public UUID id(){return id;} public UUID clienteId(){return clienteId;} public UUID freelancerId(){return freelancerId;}
     public String titulo(){return titulo;} public BigDecimal valor(){return valor;} public StatusContrato status(){return status;}
