@@ -6,7 +6,7 @@
     <artifactId>freela-marketplace</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
+    
     <properties>
         <java.version>21</java.version>
         <spring-boot.version>4.1.0</spring-boot.version>

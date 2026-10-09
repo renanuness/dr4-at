@@ -17,7 +17,8 @@ public class ContratoController {
     private final ContratoApplicationService service;
     public ContratoController(ContratoApplicationService service){this.service=service;}
 
-    @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ContratoResponse criar(@RequestHeader(value="X-Correlation-Id", required=false) String correlationId,
                                    @Valid @RequestBody CriarContratoRequest request) {
         log.info("http.contrato.criar correlationId={} clienteId={} freelancerId={} titulo={}", correlationId, request.clienteId(), request.freelancerId(), request.titulo());
@@ -25,11 +26,13 @@ public class ContratoController {
         log.info("http.contrato.criar.response correlationId={} contratoId={} status={}", correlationId, c.id(), c.status());
         return ContratoResponse.from(c);
     }
+
     @GetMapping("/{id}")
     public ContratoResponse buscar(@RequestHeader(value="X-Correlation-Id", required=false) String correlationId, @PathVariable UUID id) {
         log.info("http.contrato.buscar correlationId={} contratoId={}", correlationId, id);
         return ContratoResponse.from(service.buscar(id));
     }
+
     @GetMapping
     public List<ContratoResponse> listar(@RequestHeader(value="X-Correlation-Id", required=false) String correlationId) {
         log.info("http.contrato.listar correlationId={}", correlationId);
