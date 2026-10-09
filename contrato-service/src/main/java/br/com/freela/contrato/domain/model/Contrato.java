@@ -29,6 +29,7 @@ public class Contrato {
         if (clienteId == null || freelancerId == null) throw new IllegalArgumentException("Cliente e freelancer são obrigatórios");
         if (titulo == null || titulo.isBlank()) throw new IllegalArgumentException("Título é obrigatório");
         if (valor == null || valor.signum() <= 0) throw new IllegalArgumentException("Valor deve ser positivo");
+
         var contrato = new Contrato(UUID.randomUUID(), clienteId, freelancerId, titulo.trim(), valor,
                 StatusContrato.ATIVO, Instant.now());
         contrato.domainEvents.add(ContratoCriado.novo(contrato));

@@ -486,3 +486,15 @@ Apache Kafka 4
 Docker Compose
 Maven
 ```
+
+TODO:
+
+- [ ] requisição recebida pelo API Gateway
+- [ ] alteração persistida no contrato-service;
+- [ ] evento publicado no Kafka;
+- [ ] consumo do evento pelos serviços interessados;
+- [ ] persistência realizada pelos consumidores;
+- [ ] tratamento de uma mensagem duplicada;
+- [ ] manutenção da ordem dos eventos de um mesmo contrato;
+- [ ] logs da mesma operação consultados de forma centralizada;
+- [ ] trace correspondente disponível no Zipkin.
