@@ -45,7 +45,7 @@ public class ContratoApplicationService {
                     contrato.id(), event.eventId(), event.eventType(), event.occurredAt());
             try {
                 var eventString = CustomJsonMapper.instance().writeValueAsString(event);
-                kafkaTemplate.send("contrato.criado", eventString);
+                kafkaTemplate.send(event.topic(), eventString);
             } catch (JacksonException e) {
                 log.error("Erro serializando evento", event);
                 log.error(e.getMessage());
@@ -67,7 +67,84 @@ public class ContratoApplicationService {
         return contrato;
     }
 
+    @Transactional(readOnly = true)
+    public Contrato registrarEntrega(UUID id){
+        var contrato = buscar(id);
+        log.info("contrato.registrarEntrega.inicio contratoId={}", id);
 
+        contrato.registrarEntrega();
+        repository.salvar(contrato);
+
+        for (DomainEvent event : contrato.pullDomainEvents()) {
+            log.info("contrato.evento.pendente contratoId={} eventId={} eventType={} occurredAt={}",
+                    contrato.id(), event.eventId(), event.eventType(), event.occurredAt());
+            try {
+                var eventString = CustomJsonMapper.instance().writeValueAsString(event);
+                System.out.println("TOPICO: " + event.topic());
+                kafkaTemplate.send(event.topic(), eventString);
+            } catch (JacksonException e) {
+                log.error("Erro serializando evento", event);
+                log.error(e.getMessage());
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }
+        }
+        log.info("contrato.registrarEntrega.sucesso contratoId={}", id, contrato.status());
+
+        return contrato;
+    }
+
+    @Transactional(readOnly = true)
+    public Contrato cancelar(UUID id){
+        var contrato = buscar(id);
+        log.info("contrato.cancelar.inicio contratoId={}", id);
+
+        contrato.cancelar();
+        repository.salvar(contrato);
+
+        for (DomainEvent event : contrato.pullDomainEvents()) {
+            log.info("contrato.evento.pendente contratoId={} eventId={} eventType={} occurredAt={}",
+                    contrato.id(), event.eventId(), event.eventType(), event.occurredAt());
+            try {
+                var eventString = CustomJsonMapper.instance().writeValueAsString(event);
+                kafkaTemplate.send(event.topic(), eventString);
+            } catch (JacksonException e) {
+                log.error("Erro serializando evento", event);
+                log.error(e.getMessage());
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }
+        }
+        log.info("contrato.cancelar.sucesso contratoId={}", id, contrato.status());
+
+        return contrato;
+    }
+
+    @Transactional(readOnly = true)
+    public Contrato concluir(UUID id){
+        var contrato = buscar(id);
+        log.info("contrato.concluir.inicio contratoId={}", id);
+
+        contrato.concluir();
+        repository.salvar(contrato);
+
+        for (DomainEvent event : contrato.pullDomainEvents()) {
+            log.info("contrato.evento.pendente contratoId={} eventId={} eventType={} occurredAt={}",
+                    contrato.id(), event.eventId(), event.eventType(), event.occurredAt());
+            try {
+                var eventString = CustomJsonMapper.instance().writeValueAsString(event);
+                kafkaTemplate.send(event.topic(), eventString);
+            } catch (JacksonException e) {
+                log.error("Erro serializando evento", event);
+                log.error(e.getMessage());
+            }catch (Exception e){
+                log.error(e.getMessage());
+            }
+        }
+        log.info("contrato.concluir.sucesso contratoId={}", id, contrato.status());
+
+        return contrato;
+    }
 
     @Transactional(readOnly = true)
     public List<Contrato> listar() {
