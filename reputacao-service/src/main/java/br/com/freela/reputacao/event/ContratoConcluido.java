@@ -1,0 +1,12 @@
+package br.com.freela.reputacao.event;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
+public record ContratoConcluido(UUID eventId,
+                                String eventType,
+                                Instant occurredAt,
+                                UUID contratoId,
+                                UUID freelancerId,
+                                BigDecimal valor) {}

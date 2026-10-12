@@ -17,4 +17,13 @@ public record ContratoCriado(UUID eventId,
         return new ContratoCriado(UUID.randomUUID(), Instant.now(), c.id(), c.clienteId(), c.freelancerId(), c.titulo(), c.valor());
     }
     @Override public String eventType() { return "ContratoCriado"; }
+    @Override public String topic(){ return "contrato.criado"; }
+
+    @Override
+    public UUID aggregateId() {
+        return  contratoId;
+    }
+
 }
+
+
