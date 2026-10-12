@@ -1,24 +1,38 @@
 package br.com.freela.auditoria.kafka;
 
-import br.com.freela.auditoria.event.ContratoCancelado;
-import br.com.freela.auditoria.event.ContratoConcluido;
-import br.com.freela.auditoria.event.ContratoCriado;
-import br.com.freela.auditoria.event.ContratoEntregaRegistrada;
+import br.com.freela.auditoria.AuditoriaService;
+import br.com.freela.auditoria.event.*;
+import br.com.freela.auditoria.helper.CustomJsonMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
 
 @Component
-public class ContratoCriadoListener {
+public class Kafkaistener {
+    private final AuditoriaService service;
+    private static final Logger log= LoggerFactory.getLogger(Kafkaistener.class);
+
+    public Kafkaistener(AuditoriaService service) {
+        this.service = service;
+    }
 
     @KafkaListener(
             topics = "contrato.criado",
             groupId = "auditoria-service-group"
     )
-    public void listenContratoCriado(ContratoCriado evento) {
-        System.out.println("Evento recebido: " + evento);
-        System.out.println("Contrato ID: " + evento.contratoId());
-        System.out.println("Cliente ID: " + evento.clienteId());
+    public void listenContratoCriado(EventEnvelope<ContratoCriado> evento) {
 
+        try {
+            var eventString = CustomJsonMapper.instance().writeValueAsString(evento.payload());
+            service.registrar(evento.eventId(), evento.aggregateId(), evento.eventType(), evento.correlationId().toString(), eventString);
+        } catch (JacksonException e) {
+            log.error("Erro serializando evento", evento);
+            log.error(e.getMessage());
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
     }
 
     @KafkaListener(
