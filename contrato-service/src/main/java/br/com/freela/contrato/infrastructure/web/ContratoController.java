@@ -22,7 +22,7 @@ public class ContratoController {
     public ContratoResponse criar(@RequestHeader(value="X-Correlation-Id", required=false) String correlationId,
                                    @Valid @RequestBody CriarContratoRequest request) {
         log.info("http.contrato.criar correlationId={} clienteId={} freelancerId={} titulo={}", correlationId, request.clienteId(), request.freelancerId(), request.titulo());
-        var c = service.criar(new CriarContratoCommand(request.clienteId(), request.freelancerId(), request.titulo(), request.valor()));
+        var c = service.criar(new CriarContratoCommand(request.clienteId(), request.freelancerId(), request.titulo(), request.valor()), correlationId);
         log.info("http.contrato.criar.response correlationId={} contratoId={} status={}", correlationId, c.id(), c.status());
         return ContratoResponse.from(c);
     }
@@ -31,7 +31,7 @@ public class ContratoController {
     @ResponseStatus(HttpStatus.OK)
     public ContratoResponse registrarEntrega(@RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
                                              @PathVariable UUID contratoId) {
-        var contrato = service.registrarEntrega(contratoId);
+        var contrato = service.registrarEntrega(contratoId, correlationId);
         return ContratoResponse.from(contrato);
     }
 
@@ -39,7 +39,7 @@ public class ContratoController {
     @ResponseStatus(HttpStatus.OK)
     public ContratoResponse concluir(@RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
                                      @PathVariable UUID contratoId){
-        var contrato = service.registrarEntrega(contratoId);
+        var contrato = service.concluir(contratoId, correlationId);
         return ContratoResponse.from(contrato);
     }
 
@@ -47,7 +47,7 @@ public class ContratoController {
     @ResponseStatus(HttpStatus.OK)
     public ContratoResponse cancelar(@RequestHeader(value = "X-Correlation-Id", required = false) String correlationId,
                                      @PathVariable UUID contratoId){
-        var contrato = service.registrarEntrega(contratoId);
+        var contrato = service.registrarEntrega(contratoId, correlationId);
         return ContratoResponse.from(contrato);
     }
 

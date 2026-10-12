@@ -16,4 +16,10 @@ public record ContratoEntregaRegistrada(UUID eventId,
     }
     @Override public String eventType() { return "EntregaRegistrada"; }
     @Override public String topic(){ return "contrato.entregaRegistrada"; }
+
+    @Override
+    public UUID aggregateId() {
+        return  contratoId;
+    }
+
 }

@@ -1,4 +1,4 @@
-package br.com.freela.auditoria.helper;
+package br.com.freela.notificacao.helper;
 
 
 import tools.jackson.databind.cfg.DateTimeFeature;

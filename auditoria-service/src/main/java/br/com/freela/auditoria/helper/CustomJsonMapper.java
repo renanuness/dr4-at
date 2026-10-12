@@ -1,4 +1,4 @@
-package br.com.freela.contrato.domain.helper;
+package br.com.freela.auditoria.helper;
 
 
 import tools.jackson.databind.cfg.DateTimeFeature;

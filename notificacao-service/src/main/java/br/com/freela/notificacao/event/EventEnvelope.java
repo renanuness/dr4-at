@@ -1,6 +1,6 @@
-package br.com.freela.auditoria.event;
+package br.com.freela.notificacao.event;
 
-import br.com.freela.auditoria.shared.DomainEvent;
+import br.com.freela.notificacao.shared.DomainEvent;
 
 import java.time.Instant;
 import java.util.UUID;

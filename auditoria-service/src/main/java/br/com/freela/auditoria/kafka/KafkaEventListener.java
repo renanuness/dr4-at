@@ -3,6 +3,7 @@ package br.com.freela.auditoria.kafka;
 import br.com.freela.auditoria.AuditoriaService;
 import br.com.freela.auditoria.event.*;
 import br.com.freela.auditoria.helper.CustomJsonMapper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -10,28 +11,45 @@ import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 
 @Component
-public class Kafkaistener {
+public class KafkaEventListener {
     private final AuditoriaService service;
-    private static final Logger log= LoggerFactory.getLogger(Kafkaistener.class);
+    private static final Logger log= LoggerFactory.getLogger(KafkaEventListener.class);
 
-    public Kafkaistener(AuditoriaService service) {
+    public KafkaEventListener(AuditoriaService service) {
         this.service = service;
     }
 
-    @KafkaListener(
-            topics = "contrato.criado",
-            groupId = "auditoria-service-group"
-    )
-    public void listenContratoCriado(EventEnvelope<ContratoCriado> evento) {
-
+    @KafkaListener(topics = "contrato.criado", groupId = "auditoria-service-group")
+    public void listenContratoCriado(ConsumerRecord<String, String> record) {
         try {
-            var eventString = CustomJsonMapper.instance().writeValueAsString(evento.payload());
-            service.registrar(evento.eventId(), evento.aggregateId(), evento.eventType(), evento.correlationId().toString(), eventString);
+            var type = CustomJsonMapper.instance()
+                    .getTypeFactory()
+                    .constructParametricType(EventEnvelope.class, ContratoCriado.class);
+            EventEnvelope<ContratoCriado> envelope = CustomJsonMapper.instance()
+                    .readValue(record.value(), type);
+
+            String correlationId = envelope.correlationId() != null
+                    ? envelope.correlationId()
+                    : "sem-correlation-id";
+
+            var payloadString = CustomJsonMapper.instance()
+                    .writeValueAsString(envelope.payload());
+
+            service.registrar(
+                    envelope.eventId(),
+                    envelope.aggregateId(),
+                    envelope.eventType(),
+                    correlationId,
+                    payloadString
+            );
+
+            log.info("Evento auditado eventId={} eventType={} correlationId={}",
+                    envelope.eventId(), envelope.eventType(), correlationId);
+
         } catch (JacksonException e) {
-            log.error("Erro serializando evento", evento);
-            log.error(e.getMessage());
-        }catch (Exception e){
-            log.error(e.getMessage());
+            log.error("Erro desserializando evento Kafka: {}", record.value(), e);
+        } catch (Exception e) {
+            log.error("Erro processando evento Kafka: {}", record.value(), e);
         }
     }
 
@@ -39,26 +57,110 @@ public class Kafkaistener {
             topics = "contrato.entregaRegistrada",
             groupId = "auditoria-service-group"
     )
-    public void listenEntregaRegistrada(ContratoEntregaRegistrada evento) {
-        System.out.println("Evento recebido: " + evento);
-        System.out.println("Contrato ID: " + evento.contratoId());
+    public void listenEntregaRegistrada(ConsumerRecord<String, String> record) {
+        try {
+            var type = CustomJsonMapper.instance()
+                    .getTypeFactory()
+                    .constructParametricType(EventEnvelope.class, ContratoCriado.class);
+            EventEnvelope<ContratoEntregaRegistrada> envelope = CustomJsonMapper.instance()
+                    .readValue(record.value(), type);
+
+            String correlationId = envelope.correlationId() != null
+                    ? envelope.correlationId()
+                    : "sem-correlation-id";
+
+            var payloadString = CustomJsonMapper.instance()
+                    .writeValueAsString(envelope.payload());
+
+            service.registrar(
+                    envelope.eventId(),
+                    envelope.aggregateId(),
+                    envelope.eventType(),
+                    correlationId,
+                    payloadString
+            );
+
+            log.info("Evento auditado eventId={} eventType={} correlationId={}",
+                    envelope.eventId(), envelope.eventType(), correlationId);
+
+        } catch (JacksonException e) {
+            log.error("Erro desserializando evento Kafka: {}", record.value(), e);
+        } catch (Exception e) {
+            log.error("Erro processando evento Kafka: {}", record.value(), e);
+        }
     }
 
     @KafkaListener(
             topics = "contrato.concluido",
             groupId = "auditoria-service-group"
     )
-    public void listen(ContratoConcluido evento) {
-        System.out.println("Evento recebido: " + evento);
-        System.out.println("Contrato ID: " + evento.contratoId());
+    public void listenContratoConcluido(ConsumerRecord<String, String> record) {
+        try {
+            var type = CustomJsonMapper.instance()
+                    .getTypeFactory()
+                    .constructParametricType(EventEnvelope.class, ContratoCriado.class);
+            EventEnvelope<ContratoConcluido> envelope = CustomJsonMapper.instance()
+                    .readValue(record.value(), type);
+
+            String correlationId = envelope.correlationId() != null
+                    ? envelope.correlationId()
+                    : "sem-correlation-id";
+
+            var payloadString = CustomJsonMapper.instance()
+                    .writeValueAsString(envelope.payload());
+
+            service.registrar(
+                    envelope.eventId(),
+                    envelope.aggregateId(),
+                    envelope.eventType(),
+                    correlationId,
+                    payloadString
+            );
+
+            log.info("Evento auditado eventId={} eventType={} correlationId={}",
+                    envelope.eventId(), envelope.eventType(), correlationId);
+
+        } catch (JacksonException e) {
+            log.error("Erro desserializando evento Kafka: {}", record.value(), e);
+        } catch (Exception e) {
+            log.error("Erro processando evento Kafka: {}", record.value(), e);
+        }
     }
 
     @KafkaListener(
             topics = "contrato.cancelado",
             groupId = "auditoria-service-group"
     )
-    public void listen(ContratoCancelado evento) {
-        System.out.println("Evento recebido: " + evento);
-        System.out.println("Contrato ID: " + evento.contratoId());
+    public void listenContratoCancelado(ConsumerRecord<String, String> record) {
+        try {
+            var type = CustomJsonMapper.instance()
+                    .getTypeFactory()
+                    .constructParametricType(EventEnvelope.class, ContratoCriado.class);
+            EventEnvelope<ContratoCancelado> envelope = CustomJsonMapper.instance()
+                    .readValue(record.value(), type);
+
+            String correlationId = envelope.correlationId() != null
+                    ? envelope.correlationId()
+                    : "sem-correlation-id";
+
+            var payloadString = CustomJsonMapper.instance()
+                    .writeValueAsString(envelope.payload());
+
+            service.registrar(
+                    envelope.eventId(),
+                    envelope.aggregateId(),
+                    envelope.eventType(),
+                    correlationId,
+                    payloadString
+            );
+
+            log.info("Evento auditado eventId={} eventType={} correlationId={}",
+                    envelope.eventId(), envelope.eventType(), correlationId);
+
+        } catch (JacksonException e) {
+            log.error("Erro desserializando evento Kafka: {}", record.value(), e);
+        } catch (Exception e) {
+            log.error("Erro processando evento Kafka: {}", record.value(), e);
+        }
     }
 }

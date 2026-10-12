@@ -1,4 +1,4 @@
-package br.com.freela.auditoria.shared;
+package br.com.freela.notificacao.shared;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;

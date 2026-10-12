@@ -18,4 +18,10 @@ public record ContratoConcluido(UUID eventId,
     }
     @Override public String eventType() { return "ContratoConcluido"; }
     @Override public String topic(){ return "contrato.concluido"; }
+
+    @Override
+    public UUID aggregateId() {
+        return  contratoId;
+    }
+
 }

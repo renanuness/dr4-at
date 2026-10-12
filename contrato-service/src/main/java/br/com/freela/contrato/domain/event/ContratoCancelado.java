@@ -13,6 +13,14 @@ public record ContratoCancelado(UUID eventId,
     public static ContratoCancelado novo(Contrato c) {
         return new ContratoCancelado(UUID.randomUUID(), Instant.now(), c.id());
     }
-    @Override public String eventType() { return "ContratoCancelado"; }
-    @Override public String topic(){ return "contrato.cancelado"; }
+
+    @Override
+    public UUID aggregateId() {
+        return  contratoId;
+    }
+
+    @Override
+    public String eventType() { return "ContratoCancelado"; }
+    @Override
+    public String topic(){ return "contrato.cancelado"; }
 }

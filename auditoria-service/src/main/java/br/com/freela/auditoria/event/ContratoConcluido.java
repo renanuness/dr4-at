@@ -5,6 +5,8 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record ContratoConcluido(UUID eventId,
+                                String eventType,
+                                UUID correlationId,
                                 Instant occurredAt,
                                 UUID contratoId,
                                 UUID freelancerId,
