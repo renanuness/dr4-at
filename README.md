@@ -489,12 +489,12 @@ Maven
 
 TODO:
 
-- [ ] requisição recebida pelo API Gateway
-- [ ] alteração persistida no contrato-service;
-- [ ] evento publicado no Kafka;
-- [ ] consumo do evento pelos serviços interessados;
-- [ ] persistência realizada pelos consumidores;
+- [x] requisição recebida pelo API Gateway
+- [x] alteração persistida no contrato-service;
+- [x] evento publicado no Kafka;
+- [x] consumo do evento pelos serviços interessados;
+- [x] persistência realizada pelos consumidores;
 - [ ] tratamento de uma mensagem duplicada;
 - [ ] manutenção da ordem dos eventos de um mesmo contrato;
-- [ ] logs da mesma operação consultados de forma centralizada;
-- [ ] trace correspondente disponível no Zipkin.
+- [x] logs da mesma operação consultados de forma centralizada;
+- [x] trace correspondente disponível no Zipkin.
