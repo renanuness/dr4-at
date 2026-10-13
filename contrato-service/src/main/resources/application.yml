@@ -21,10 +21,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
+        include: health,info,gateway
+  tracing:
+    sampling:
+      probability: 1.0
+    export:
+      zipkin:
+        endpoint: "http://zipkin:9411/api/v2/spans"
+        enabled: true
 eureka:
   client:
     service-url:
@@ -32,7 +36,11 @@ eureka:
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level service=${spring.application.name} thread=%thread logger=%logger{36} - %msg%n"
+    correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}] "
   level:
     root: INFO
     br.com.freela: INFO
     org.hibernate.SQL: INFO
+    io.micrometer.tracing: DEBUG
+    brave: DEBUG
+    zipkin2: DEBUG
