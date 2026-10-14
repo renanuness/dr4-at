@@ -1,6 +1,7 @@
 package br.com.freela.auditoria.kafka;
 
 import br.com.freela.auditoria.AuditoriaService;
+import br.com.freela.auditoria.EventoAuditoriaRepository;
 import br.com.freela.auditoria.event.*;
 import br.com.freela.auditoria.helper.CustomJsonMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,19 +15,27 @@ import tools.jackson.core.JacksonException;
 public class KafkaEventListener {
     private final AuditoriaService service;
     private static final Logger log= LoggerFactory.getLogger(KafkaEventListener.class);
+    private final EventoAuditoriaRepository eventoRepository;
 
-    public KafkaEventListener(AuditoriaService service) {
+    public KafkaEventListener(AuditoriaService service, EventoAuditoriaRepository eventoRepository) {
         this.service = service;
+        this.eventoRepository = eventoRepository;
     }
 
     @KafkaListener(topics = "contrato.criado", groupId = "auditoria-service-group")
     public void listenContratoCriado(ConsumerRecord<String, String> record) {
         try {
+
             var type = CustomJsonMapper.instance()
                     .getTypeFactory()
                     .constructParametricType(EventEnvelope.class, ContratoCriado.class);
             EventEnvelope<ContratoCriado> envelope = CustomJsonMapper.instance()
                     .readValue(record.value(), type);
+
+            if(eventoRepository.findByEventId(envelope.eventId()).isPresent()){
+                log.info("Evento já processado");
+                return;
+            }
 
             String correlationId = envelope.correlationId() != null
                     ? envelope.correlationId()
